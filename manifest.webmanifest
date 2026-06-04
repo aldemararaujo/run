@@ -1,0 +1,25 @@
+{
+  "name": "Plano Meia Maratona RUN WALK RUN",
+  "short_name": "Meia RUN WALK",
+  "description": "Plano de treino para meia maratona com método RUN/WALK/RUN, checklist, dashboard e backup.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f7fb",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
