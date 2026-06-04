@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Plano Meia Maratona RUN/WALK/RUN</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #172033;
+      --muted: #64748b;
+      --border: #dbe3ef;
+      --shadow: 0 14px 35px rgba(15, 23, 42, 0.08);
+      --blue: #2563eb;
+      --green: #16a34a;
+      --orange: #f97316;
+      --red: #dc2626;
+      --purple: #7c3aed;
+      --ok: #10b981;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #eef4ff 0%, var(--bg) 45%, #ffffff 100%);
+      color: var(--text);
+    }
+
+    .container {
+      width: min(1180px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 28px 0 48px;
+    }
+
+    header {
+      background: linear-gradient(135deg, #102a43 0%, #2563eb 62%, #16a34a 100%);
+      color: #ffffff;
+      border-radius: 28px;
+      padding: 30px;
+      box-shadow: var(--shadow);
+      margin-bottom: 22px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::after {
+      content: "";
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      right: -70px;
+      top: -80px;
+    }
+
+    header h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      line-height: 1.05;
+      max-width: 860px;
+      position: relative;
+      z-index: 1;
+    }
+
+    header p {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 1.05rem;
+      max-width: 860px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .quick-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      font-size: 0.92rem;
+      backdrop-filter: blur(8px);
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .metric {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .metric .label {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+    }
+
+    .metric .value {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      margin-bottom: 4px;
+    }
+
+    .metric .sub {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .progress-card, .table-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+    }
+
+    .table-card {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .progress-card h2 {
+      margin: 0 0 12px;
+      font-size: 1.2rem;
+    }
+
+    .progress-row {
+      display: grid;
+      grid-template-columns: 1.2fr 2fr 0.6fr;
+      gap: 12px;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .progress-label {
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 0.92rem;
+    }
+
+    .bar {
+      height: 14px;
+      background: #e5eaf3;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid #d8e1ee;
+    }
+
+    .bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--blue), var(--green));
+      border-radius: inherit;
+      transition: width 0.25s ease;
+    }
+
+    .bar-fill.km {
+      background: linear-gradient(90deg, var(--orange), var(--red));
+    }
+
+    .progress-number {
+      font-weight: 800;
+      text-align: right;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 14px;
+      padding: 11px 14px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+
+    .btn-primary { background: #172033; color: #fff; }
+    .btn-light { background: #ffffff; color: #172033; border: 1px solid var(--border); }
+    .btn-danger { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+
+    .legend {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .legend-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 12px;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 58px;
+    }
+
+    .dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      flex: none;
+    }
+
+    .blue { background: var(--blue); }
+    .green { background: var(--green); }
+    .orange { background: var(--orange); }
+    .red { background: var(--red); }
+    .purple { background: var(--purple); }
+
+    .legend-title { font-weight: 900; line-height: 1.15; }
+    .legend-sub { color: var(--muted); font-size: 0.78rem; margin-top: 3px; }
+
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border);
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .table-header h2 {
+      margin: 0;
+      font-size: 1.22rem;
+    }
+
+    .table-header p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .next-workout {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 10px 12px;
+      color: var(--text);
+      min-width: min(100%, 360px);
+    }
+
+    .next-workout strong {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+    }
+
+    .table-wrapper { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 980px;
+    }
+
+    th, td {
+      padding: 13px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+      font-size: 0.92rem;
+    }
+
+    th {
+      background: #f8fafc;
+      color: #334155;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      position: sticky;
+      top: 0;
+      z-index: 3;
+    }
+
+    tr.completed-row { background: #f0fdf4; }
+    tr:hover { background: #f8fafc; }
+
+    .cycle-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 10px;
+      border-radius: 999px;
+      color: #ffffff;
+      font-weight: 900;
+      white-space: nowrap;
+      font-size: 0.82rem;
+    }
+
+    .cycle-adaptacao { background: var(--blue); }
+    .cycle-construcao { background: var(--green); }
+    .cycle-consolidacao { background: var(--orange); }
+    .cycle-pico { background: var(--red); }
+    .cycle-prova { background: var(--purple); }
+
+    .week {
+      font-weight: 900;
+      font-size: 1rem;
+    }
+
+    .day-card {
+      display: grid;
+      gap: 5px;
+      min-width: 165px;
+    }
+
+    .date { font-weight: 900; }
+    .distance { color: var(--text); font-weight: 800; }
+    .method { color: var(--muted); font-size: 0.82rem; }
+
+    .skip {
+      color: #94a3b8;
+      font-style: italic;
+    }
+
+    .checkline {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 4px;
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 0.82rem;
+      user-select: none;
+    }
+
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--ok);
+      cursor: pointer;
+    }
+
+    .total {
+      font-weight: 900;
+      font-size: 1rem;
+    }
+
+    .focus {
+      color: #334155;
+      line-height: 1.35;
+    }
+
+    .mini-chart {
+      display: grid;
+      grid-template-columns: repeat(16, 1fr);
+      gap: 5px;
+      align-items: end;
+      min-height: 120px;
+      padding: 14px 4px 0;
+    }
+
+    .mini-bar-wrap {
+      display: grid;
+      align-items: end;
+      gap: 5px;
+      min-height: 100px;
+    }
+
+    .mini-bar {
+      width: 100%;
+      border-radius: 8px 8px 3px 3px;
+      background: #cbd5e1;
+      min-height: 8px;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .mini-bar.done {
+      background: linear-gradient(180deg, var(--green), #86efac);
+    }
+
+    .mini-label {
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-align: center;
+      font-weight: 800;
+    }
+
+    .note-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .note {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
+    }
+
+    .note strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .note p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.35;
+    }
+
+    .footer {
+      color: var(--muted);
+      text-align: center;
+      margin-top: 28px;
+      font-size: 0.88rem;
+    }
+
+    @media (max-width: 920px) {
+      .dashboard { grid-template-columns: repeat(2, 1fr); }
+      .legend { grid-template-columns: repeat(2, 1fr); }
+      .note-grid { grid-template-columns: repeat(2, 1fr); }
+      .progress-row { grid-template-columns: 1fr; }
+      .progress-number { text-align: left; }
+    }
+
+    @media (max-width: 580px) {
+      .container { width: min(100% - 18px, 1180px); padding-top: 12px; }
+      header { border-radius: 20px; padding: 22px; }
+      .dashboard, .legend, .note-grid { grid-template-columns: 1fr; }
+      .metric .value { font-size: 1.7rem; }
+      .table-header { padding: 16px; }
+      th, td { padding: 11px 10px; }
+    }
+
+    @media print {
+      body { background: #fff; }
+      .controls { display: none; }
+      .container { width: 100%; padding: 0; }
+      header, .metric, .progress-card, .table-card, .note { box-shadow: none; }
+      table { min-width: 100%; font-size: 0.78rem; }
+      th, td { padding: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Plano de Treinamento para Meia Maratona</h1>
+      <p>RUN/WALK/RUN, início em quinta-feira, 04/06/2026, treinos às segundas, quintas e sábados, com objetivo de completar confortável em 18/09/2026.</p>
+      <div class="quick-info">
+        <span class="pill">🚀 Início: 04/06/2026</span>
+        <span class="pill">🏁 Prova: 18/09/2026</span>
+        <span class="pill">📅 Semana 0 + 15 semanas</span>
+        <span class="pill">🏃 Segunda, quinta e sábado</span>
+        <span class="pill">🎯 Completar confortável</span>
+      </div>
+    </header>
+
+    <section class="dashboard">
+      <div class="metric">
+        <div class="label">Treinos concluídos</div>
+        <div class="value" id="completedWorkouts">0/0</div>
+        <div class="sub" id="completedPercent">0% do plano</div>
+      </div>
+      <div class="metric">
+        <div class="label">Quilometragem realizada</div>
+        <div class="value" id="completedKm">0 km</div>
+        <div class="sub" id="plannedKm">de 0 km planejados</div>
+      </div>
+      <div class="metric">
+        <div class="label">Maior treino concluído</div>
+        <div class="value" id="longestDone">0 km</div>
+        <div class="sub">melhor marca do ciclo</div>
+      </div>
+      <div class="metric">
+        <div class="label">Restante do plano</div>
+        <div class="value" id="remainingKm">0 km</div>
+        <div class="sub" id="remainingWorkouts">0 treinos restantes</div>
+      </div>
+    </section>
+
+    <section class="progress-card">
+      <h2>Dashboard de progressão</h2>
+      <div class="progress-row">
+        <div class="progress-label">Conclusão dos treinos</div>
+        <div class="bar"><div class="bar-fill" id="workoutProgress"></div></div>
+        <div class="progress-number" id="workoutProgressText">0%</div>
+      </div>
+      <div class="progress-row">
+        <div class="progress-label">Quilometragem acumulada</div>
+        <div class="bar"><div class="bar-fill km" id="kmProgress"></div></div>
+        <div class="progress-number" id="kmProgressText">0%</div>
+      </div>
+      <div class="mini-chart" id="weeklyChart" aria-label="Gráfico de quilometragem semanal"></div>
+    </section>
+
+    <section class="controls">
+      <button class="btn-primary" onclick="markPastAsDone()">Marcar até hoje como concluído</button>
+      <button class="btn-light" onclick="showOnlyPending()">Mostrar apenas pendentes</button>
+      <button class="btn-light" onclick="showAllRows()">Mostrar todos</button>
+      <button class="btn-danger" onclick="resetProgress()">Limpar progresso</button>
+    </section>
+
+    <section class="legend">
+      <div class="legend-item"><span class="dot blue"></span><div><div class="legend-title">Adaptação</div><div class="legend-sub">30 s RUN + 60 s WALK</div></div></div>
+      <div class="legend-item"><span class="dot green"></span><div><div class="legend-title">Construção</div><div class="legend-sub">45 s RUN + 60 s WALK</div></div></div>
+      <div class="legend-item"><span class="dot orange"></span><div><div class="legend-title">Consolidação</div><div class="legend-sub">1 min RUN + 1 min WALK</div></div></div>
+      <div class="legend-item"><span class="dot red"></span><div><div class="legend-title">Pico</div><div class="legend-sub">Treino longo e polimento</div></div></div>
+      <div class="legend-item"><span class="dot purple"></span><div><div class="legend-title">Prova</div><div class="legend-sub">21,1 km com controle</div></div></div>
+    </section>
+
+    <section class="table-card">
+      <div class="table-header">
+        <div>
+          <h2>Tabela didática do plano</h2>
+          <p>Marque cada treino concluído. Os blocos mostram sempre tempo de RUN e tempo de WALK. O progresso fica salvo neste navegador.</p>
+        </div>
+        <div class="next-workout">
+          <strong>Próximo treino</strong>
+          <span id="nextWorkout">Carregando...</span>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Ciclo</th>
+              <th>Semana</th>
+              <th>Segunda</th>
+              <th>Quinta</th>
+              <th>Sábado ou prova</th>
+              <th>Total semanal</th>
+              <th>Foco</th>
+            </tr>
+          </thead>
+          <tbody id="trainingTable"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="note-grid">
+      <div class="note"><strong>✅ Verde</strong><p>Treino concluído e sem dor relevante. Pode seguir a progressão.</p></div>
+      <div class="note"><strong>🟡 Atenção</strong><p>Cansaço alto sem dor. Mantenha a carga, mas não acelere.</p></div>
+      <div class="note"><strong>🟠 Alerta</strong><p>Rigidez ou dor leve no Aquiles. Repetir a semana ou reduzir 30%.</p></div>
+      <div class="note"><strong>🔴 Pare</strong><p>Dor que altera a passada, inchaço ou mancar. Substitua por WALK e reavalie.</p></div>
+    </section>
+
+    <div class="footer">
+      Plano orientado para completar confortável. A regra principal é constância, não velocidade.
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "meia_maratona_run_walk_run_2026_inicio_0406";
+    const weeks = [
+      {
+            "cycle": "Ativação",
+            "cycleClass": "cycle-adaptacao",
+            "week": "0",
+            "total": 5,
+            "focus": "Começar hoje, sem compensar o treino de segunda",
+            "sessions": [
+                  {
+                        "id": "w0_mon",
+                        "day": "Segunda",
+                        "date": "",
+                        "label": "01/06",
+                        "distance": 0,
+                        "method": "Sem treino, início ainda não havia começado",
+                        "skip": true
+                  },
+                  {
+                        "id": "w0_thu",
+                        "day": "Quinta",
+                        "date": "2026-06-04",
+                        "label": "04/06",
+                        "distance": 2,
+                        "method": "30 s RUN + 60 s WALK"
+                  },
+                  {
+                        "id": "w0_sat",
+                        "day": "Sábado",
+                        "date": "2026-06-06",
+                        "label": "06/06",
+                        "distance": 3,
+                        "method": "30 s RUN + 60 s WALK"
+                  }
+            ]
+      },
+      {
+            "cycle": "Adaptação",
+            "cycleClass": "cycle-adaptacao",
+            "week": "1",
+            "total": 7,
+            "focus": "Criar regularidade",
+            "sessions": [
+                  {
+                        "id": "w1_mon",
+                        "day": "Segunda",
+                        "date": "2026-06-08",
+                        "label": "08/06",
+                        "distance": 2,
+                        "method": "30 s RUN + 60 s WALK"
+                  },
+                  {
+                        "id": "w1_thu",
+                        "day": "Quinta",
+                        "date": "2026-06-11",
+                        "label": "11/06",
+                        "distance": 2,
+                        "method": "30 s RUN + 60 s WALK"
+                  },
+                  {
+                        "id": "w1_sat",
+                        "day": "Sábado",
+                        "date": "2026-06-13",
+                        "label": "13/06",
+                        "distance": 3,
+                        "method": "30 s RUN + 60 s WALK"
+                  }
+            ]
+      },
+      {
+            "cycle": "Adaptação",
+            "cycleClass": "cycle-adaptacao",
+            "week": "2",
+            "total": 9,
+            "focus": "Aumentar volume sem acelerar",
+            "sessions": [
+                  {
+                        "id": "w2_mon",
+                        "day": "Segunda",
+                        "date": "2026-06-15",
+                        "label": "15/06",
+                        "distance": 2.5,
+                        "method": "30 s RUN + 60 s WALK"
+                  },
+                  {
+                        "id": "w2_thu",
+                        "day": "Quinta",
+                        "date": "2026-06-18",
+                        "label": "18/06",
+                        "distance": 2.5,
+                        "method": "30 s RUN + 60 s WALK"
+                  },
+                  {
+                        "id": "w2_sat",
+                        "day": "Sábado",
+                        "date": "2026-06-20",
+                        "label": "20/06",
+                        "distance": 4,
+                        "method": "30 s RUN + 60 s WALK"
+                  }
+            ]
+      },
+      {
+            "cycle": "Adaptação",
+            "cycleClass": "cycle-adaptacao",
+            "week": "3",
+            "total": 11,
+            "focus": "Primeiro treino longo de 5 km",
+            "sessions": [
+                  {
+                        "id": "w3_mon",
+                        "day": "Segunda",
+                        "date": "2026-06-22",
+                        "label": "22/06",
+                        "distance": 3,
+                        "method": "30 s RUN + 60 s WALK"
+                  },
+                  {
+                        "id": "w3_thu",
+                        "day": "Quinta",
+                        "date": "2026-06-25",
+                        "label": "25/06",
+                        "distance": 3,
+                        "method": "30 s RUN + 60 s WALK"
+                  },
+                  {
+                        "id": "w3_sat",
+                        "day": "Sábado",
+                        "date": "2026-06-27",
+                        "label": "27/06",
+                        "distance": 5,
+                        "method": "30 s RUN + 60 s WALK"
+                  }
+            ]
+      },
+      {
+            "cycle": "Redução",
+            "cycleClass": "cycle-adaptacao",
+            "week": "4",
+            "total": 9,
+            "focus": "Recuperar e consolidar",
+            "sessions": [
+                  {
+                        "id": "w4_mon",
+                        "day": "Segunda",
+                        "date": "2026-06-29",
+                        "label": "29/06",
+                        "distance": 2.5,
+                        "method": "30 s RUN + 60 s WALK"
+                  },
+                  {
+                        "id": "w4_thu",
+                        "day": "Quinta",
+                        "date": "2026-07-02",
+                        "label": "02/07",
+                        "distance": 2.5,
+                        "method": "30 s RUN + 60 s WALK"
+                  },
+                  {
+                        "id": "w4_sat",
+                        "day": "Sábado",
+                        "date": "2026-07-04",
+                        "label": "04/07",
+                        "distance": 4,
+                        "method": "30 s RUN + 60 s WALK"
+                  }
+            ]
+      },
+      {
+            "cycle": "Construção",
+            "cycleClass": "cycle-construcao",
+            "week": "5",
+            "total": 12.5,
+            "focus": "Entrar no ciclo de construção",
+            "sessions": [
+                  {
+                        "id": "w5_mon",
+                        "day": "Segunda",
+                        "date": "2026-07-06",
+                        "label": "06/07",
+                        "distance": 3.5,
+                        "method": "45 s RUN + 60 s WALK"
+                  },
+                  {
+                        "id": "w5_thu",
+                        "day": "Quinta",
+                        "date": "2026-07-09",
+                        "label": "09/07",
+                        "distance": 3,
+                        "method": "45 s RUN + 60 s WALK"
+                  },
+                  {
+                        "id": "w5_sat",
+                        "day": "Sábado",
+                        "date": "2026-07-11",
+                        "label": "11/07",
+                        "distance": 6,
+                        "method": "45 s RUN + 60 s WALK"
+                  }
+            ]
+      },
+      {
+            "cycle": "Construção",
+            "cycleClass": "cycle-construcao",
+            "week": "6",
+            "total": 14.5,
+            "focus": "Melhorar resistência",
+            "sessions": [
+                  {
+                        "id": "w6_mon",
+                        "day": "Segunda",
+                        "date": "2026-07-13",
+                        "label": "13/07",
+                        "distance": 4,
+                        "method": "45 s RUN + 60 s WALK"
+                  },
+                  {
+                        "id": "w6_thu",
+                        "day": "Quinta",
+                        "date": "2026-07-16",
+                        "label": "16/07",
+                        "distance": 3.5,
+                        "method": "45 s RUN + 60 s WALK"
+                  },
+                  {
+                        "id": "w6_sat",
+                        "day": "Sábado",
+                        "date": "2026-07-18",
+                        "label": "18/07",
+                        "distance": 7,
+                        "method": "45 s RUN + 60 s WALK"
+                  }
+            ]
+      },
+      {
+            "cycle": "Construção",
+            "cycleClass": "cycle-construcao",
+            "week": "7",
+            "total": 16,
+            "focus": "Sustentar maior volume",
+            "sessions": [
+                  {
+                        "id": "w7_mon",
+                        "day": "Segunda",
+                        "date": "2026-07-20",
+                        "label": "20/07",
+                        "distance": 4,
+                        "method": "45 s RUN + 60 s WALK"
+                  },
+                  {
+                        "id": "w7_thu",
+                        "day": "Quinta",
+                        "date": "2026-07-23",
+                        "label": "23/07",
+                        "distance": 4,
+                        "method": "45 s RUN + 60 s WALK"
+                  },
+                  {
+                        "id": "w7_sat",
+                        "day": "Sábado",
+                        "date": "2026-07-25",
+                        "label": "25/07",
+                        "distance": 8,
+                        "method": "45 s RUN + 60 s WALK"
+                  }
+            ]
+      },
+      {
+            "cycle": "Redução",
+            "cycleClass": "cycle-construcao",
+            "week": "8",
+            "total": 12,
+            "focus": "Absorver o treino",
+            "sessions": [
+                  {
+                        "id": "w8_mon",
+                        "day": "Segunda",
+                        "date": "2026-07-27",
+                        "label": "27/07",
+                        "distance": 3,
+                        "method": "45 s RUN + 60 s WALK"
+                  },
+                  {
+                        "id": "w8_thu",
+                        "day": "Quinta",
+                        "date": "2026-07-30",
+                        "label": "30/07",
+                        "distance": 3,
+                        "method": "45 s RUN + 60 s WALK"
+                  },
+                  {
+                        "id": "w8_sat",
+                        "day": "Sábado",
+                        "date": "2026-08-01",
+                        "label": "01/08",
+                        "distance": 6,
+                        "method": "45 s RUN + 60 s WALK"
+                  }
+            ]
+      },
+      {
+            "cycle": "Consolidação",
+            "cycleClass": "cycle-consolidacao",
+            "week": "9",
+            "total": 18.5,
+            "focus": "Chegar aos 10 km",
+            "sessions": [
+                  {
+                        "id": "w9_mon",
+                        "day": "Segunda",
+                        "date": "2026-08-03",
+                        "label": "03/08",
+                        "distance": 4.5,
+                        "method": "1 min RUN + 1 min WALK"
+                  },
+                  {
+                        "id": "w9_thu",
+                        "day": "Quinta",
+                        "date": "2026-08-06",
+                        "label": "06/08",
+                        "distance": 4,
+                        "method": "1 min RUN + 1 min WALK"
+                  },
+                  {
+                        "id": "w9_sat",
+                        "day": "Sábado",
+                        "date": "2026-08-08",
+                        "label": "08/08",
+                        "distance": 10,
+                        "method": "1 min RUN + 1 min WALK"
+                  }
+            ]
+      },
+      {
+            "cycle": "Consolidação",
+            "cycleClass": "cycle-consolidacao",
+            "week": "10",
+            "total": 21.5,
+            "focus": "Entrar em zona de meia maratona",
+            "sessions": [
+                  {
+                        "id": "w10_mon",
+                        "day": "Segunda",
+                        "date": "2026-08-10",
+                        "label": "10/08",
+                        "distance": 5,
+                        "method": "1 min RUN + 1 min WALK"
+                  },
+                  {
+                        "id": "w10_thu",
+                        "day": "Quinta",
+                        "date": "2026-08-13",
+                        "label": "13/08",
+                        "distance": 4.5,
+                        "method": "1 min RUN + 1 min WALK"
+                  },
+                  {
+                        "id": "w10_sat",
+                        "day": "Sábado",
+                        "date": "2026-08-15",
+                        "label": "15/08",
+                        "distance": 12,
+                        "method": "1 min RUN + 1 min WALK"
+                  }
+            ]
+      },
+      {
+            "cycle": "Consolidação",
+            "cycleClass": "cycle-consolidacao",
+            "week": "11",
+            "total": 24,
+            "focus": "Semana forte",
+            "sessions": [
+                  {
+                        "id": "w11_mon",
+                        "day": "Segunda",
+                        "date": "2026-08-17",
+                        "label": "17/08",
+                        "distance": 5,
+                        "method": "1 min RUN + 1 min WALK"
+                  },
+                  {
+                        "id": "w11_thu",
+                        "day": "Quinta",
+                        "date": "2026-08-20",
+                        "label": "20/08",
+                        "distance": 5,
+                        "method": "1 min RUN + 1 min WALK"
+                  },
+                  {
+                        "id": "w11_sat",
+                        "day": "Sábado",
+                        "date": "2026-08-22",
+                        "label": "22/08",
+                        "distance": 14,
+                        "method": "1 min RUN + 1 min WALK"
+                  }
+            ]
+      },
+      {
+            "cycle": "Redução",
+            "cycleClass": "cycle-consolidacao",
+            "week": "12",
+            "total": 18,
+            "focus": "Recuperar sem perder ritmo",
+            "sessions": [
+                  {
+                        "id": "w12_mon",
+                        "day": "Segunda",
+                        "date": "2026-08-24",
+                        "label": "24/08",
+                        "distance": 4,
+                        "method": "1 min RUN + 1 min WALK"
+                  },
+                  {
+                        "id": "w12_thu",
+                        "day": "Quinta",
+                        "date": "2026-08-27",
+                        "label": "27/08",
+                        "distance": 4,
+                        "method": "1 min RUN + 1 min WALK"
+                  },
+                  {
+                        "id": "w12_sat",
+                        "day": "Sábado",
+                        "date": "2026-08-29",
+                        "label": "29/08",
+                        "distance": 10,
+                        "method": "1 min RUN + 1 min WALK"
+                  }
+            ]
+      },
+      {
+            "cycle": "Pico",
+            "cycleClass": "cycle-pico",
+            "week": "13",
+            "total": 26.5,
+            "focus": "Maior treino longo",
+            "sessions": [
+                  {
+                        "id": "w13_mon",
+                        "day": "Segunda",
+                        "date": "2026-08-31",
+                        "label": "31/08",
+                        "distance": 5.5,
+                        "method": "1 min RUN + 1 min WALK"
+                  },
+                  {
+                        "id": "w13_thu",
+                        "day": "Quinta",
+                        "date": "2026-09-03",
+                        "label": "03/09",
+                        "distance": 5,
+                        "method": "1 min RUN + 1 min WALK"
+                  },
+                  {
+                        "id": "w13_sat",
+                        "day": "Sábado",
+                        "date": "2026-09-05",
+                        "label": "05/09",
+                        "distance": 16,
+                        "method": "1 min RUN + 1 min WALK"
+                  }
+            ]
+      },
+      {
+            "cycle": "Polimento",
+            "cycleClass": "cycle-pico",
+            "week": "14",
+            "total": 15,
+            "focus": "Reduzir fadiga",
+            "sessions": [
+                  {
+                        "id": "w14_mon",
+                        "day": "Segunda",
+                        "date": "2026-09-07",
+                        "label": "07/09",
+                        "distance": 4,
+                        "method": "1 min RUN + 1 min WALK"
+                  },
+                  {
+                        "id": "w14_thu",
+                        "day": "Quinta",
+                        "date": "2026-09-10",
+                        "label": "10/09",
+                        "distance": 3,
+                        "method": "1 min RUN + 1 min WALK"
+                  },
+                  {
+                        "id": "w14_sat",
+                        "day": "Sábado",
+                        "date": "2026-09-12",
+                        "label": "12/09",
+                        "distance": 8,
+                        "method": "1 min RUN + 1 min WALK"
+                  }
+            ]
+      },
+      {
+            "cycle": "Prova",
+            "cycleClass": "cycle-prova",
+            "week": "15",
+            "total": 26.1,
+            "focus": "Chegar descansado e completar confortável",
+            "sessions": [
+                  {
+                        "id": "w15_mon",
+                        "day": "Segunda",
+                        "date": "2026-09-14",
+                        "label": "14/09",
+                        "distance": 3,
+                        "method": "Muito leve"
+                  },
+                  {
+                        "id": "w15_thu",
+                        "day": "Quinta",
+                        "date": "2026-09-17",
+                        "label": "17/09",
+                        "distance": 2,
+                        "method": "Solto e confortável"
+                  },
+                  {
+                        "id": "w15_race",
+                        "day": "Prova",
+                        "date": "2026-09-18",
+                        "label": "18/09",
+                        "distance": 21.1,
+                        "method": "Meia maratona, 1 min RUN + 1 min WALK"
+                  }
+            ]
+      }
+];
+
+    function getState() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function setState(state) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function formatKm(value) {
+      return Number(value).toLocaleString("pt-BR", {
+        minimumFractionDigits: value % 1 === 0 ? 0 : 1,
+        maximumFractionDigits: 1
+      }) + " km";
+    }
+
+    function allSessions() {
+      return weeks.flatMap(week => week.sessions.filter(session => !session.skip).map(session => ({
+        ...session,
+        week: week.week,
+        cycle: week.cycle,
+        cycleClass: week.cycleClass
+      })));
+    }
+
+    function renderSession(session) {
+      if (session.skip) {
+        return `
+          <div class="day-card skip">
+            <div class="date">${session.day}, ${session.label}</div>
+            <div class="distance">Sem treino</div>
+            <div class="method">${session.method}</div>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="day-card">
+          <div class="date">${session.day}, ${session.label}</div>
+          <div class="distance">${formatKm(session.distance)}</div>
+          <div class="method">${session.method}</div>
+          <label class="checkline">
+            <input type="checkbox" data-id="${session.id}" data-distance="${session.distance}">
+            Concluído
+          </label>
+        </div>
+      `;
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById("trainingTable");
+      tbody.innerHTML = weeks.map(week => `
+        <tr data-week="${week.week}">
+          <td><span class="cycle-tag ${week.cycleClass}">${week.cycle}</span></td>
+          <td class="week">${week.week}</td>
+          <td>${renderSession(week.sessions[0])}</td>
+          <td>${renderSession(week.sessions[1])}</td>
+          <td>${renderSession(week.sessions[2])}</td>
+          <td class="total">${formatKm(week.total)}</td>
+          <td class="focus">${week.focus}</td>
+        </tr>
+      `).join("");
+
+      const state = getState();
+
+      document.querySelectorAll('input[type="checkbox"][data-id]').forEach(checkbox => {
+        checkbox.checked = Boolean(state[checkbox.dataset.id]);
+        checkbox.addEventListener("change", () => {
+          const nextState = getState();
+          nextState[checkbox.dataset.id] = checkbox.checked;
+          setState(nextState);
+          updateDashboard();
+        });
+      });
+
+      updateDashboard();
+    }
+
+    function updateDashboard() {
+      const state = getState();
+      const sessions = allSessions();
+      const totalWorkouts = sessions.length;
+      const totalKm = sessions.reduce((sum, item) => sum + item.distance, 0);
+
+      const completed = sessions.filter(item => state[item.id]);
+      const completedCount = completed.length;
+      const completedKm = completed.reduce((sum, item) => sum + item.distance, 0);
+      const longestDone = completed.length ? Math.max(...completed.map(item => item.distance)) : 0;
+
+      const workoutPct = totalWorkouts ? Math.round((completedCount / totalWorkouts) * 100) : 0;
+      const kmPct = totalKm ? Math.round((completedKm / totalKm) * 100) : 0;
+
+      document.getElementById("completedWorkouts").textContent = `${completedCount}/${totalWorkouts}`;
+      document.getElementById("completedPercent").textContent = `${workoutPct}% do plano`;
+      document.getElementById("completedKm").textContent = formatKm(completedKm);
+      document.getElementById("plannedKm").textContent = `de ${formatKm(totalKm)} planejados`;
+      document.getElementById("longestDone").textContent = formatKm(longestDone);
+      document.getElementById("remainingKm").textContent = formatKm(Math.max(totalKm - completedKm, 0));
+      document.getElementById("remainingWorkouts").textContent = `${Math.max(totalWorkouts - completedCount, 0)} treinos restantes`;
+
+      document.getElementById("workoutProgress").style.width = `${workoutPct}%`;
+      document.getElementById("workoutProgressText").textContent = `${workoutPct}%`;
+      document.getElementById("kmProgress").style.width = `${kmPct}%`;
+      document.getElementById("kmProgressText").textContent = `${kmPct}%`;
+
+      document.querySelectorAll("tr[data-week]").forEach(row => {
+        const checks = row.querySelectorAll('input[type="checkbox"]');
+        if (!checks.length) return;
+        const allChecked = Array.from(checks).every(chk => chk.checked);
+        row.classList.toggle("completed-row", allChecked);
+      });
+
+      updateNextWorkout(state);
+      renderWeeklyChart(state);
+    }
+
+    function updateNextWorkout(state) {
+      const sessions = allSessions().sort((a, b) => new Date(a.date) - new Date(b.date));
+      const next = sessions.find(session => !state[session.id]);
+      const target = document.getElementById("nextWorkout");
+
+      if (!next) {
+        target.textContent = "Plano concluído. Excelente execução.";
+        return;
+      }
+
+      target.textContent = `${next.day}, ${next.label}, ${formatKm(next.distance)}, ${next.method}`;
+    }
+
+    function renderWeeklyChart(state) {
+      const chart = document.getElementById("weeklyChart");
+      const maxTotal = Math.max(...weeks.map(week => week.total));
+
+      chart.innerHTML = weeks.map(week => {
+        const realSessions = week.sessions.filter(session => !session.skip);
+        const weekDone = realSessions.length > 0 && realSessions.every(session => state[session.id]);
+        const height = Math.round((week.total / maxTotal) * 92);
+        return `
+          <div class="mini-bar-wrap" title="Semana ${week.week}: ${formatKm(week.total)}">
+            <div class="mini-bar ${weekDone ? "done" : ""}" style="height:${height}px"></div>
+            <div class="mini-label">S${week.week}</div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function markPastAsDone() {
+      const state = getState();
+      const today = new Date();
+      today.setHours(23, 59, 59, 999);
+
+      allSessions().forEach(session => {
+        const sessionDate = new Date(session.date + "T12:00:00");
+        if (sessionDate <= today) {
+          state[session.id] = true;
+        }
+      });
+
+      setState(state);
+      renderTable();
+    }
+
+    function showOnlyPending() {
+      const state = getState();
+
+      document.querySelectorAll("tr[data-week]").forEach(row => {
+        const checks = row.querySelectorAll('input[type="checkbox"]');
+        if (!checks.length) {
+          row.style.display = "";
+          return;
+        }
+        const hasPending = Array.from(checks).some(chk => !state[chk.dataset.id]);
+        row.style.display = hasPending ? "" : "none";
+      });
+    }
+
+    function showAllRows() {
+      document.querySelectorAll("tr[data-week]").forEach(row => {
+        row.style.display = "";
+      });
+    }
+
+    function resetProgress() {
+      const confirmed = confirm("Deseja limpar todo o progresso salvo neste navegador?");
+      if (!confirmed) return;
+
+      localStorage.removeItem(STORAGE_KEY);
+      renderTable();
+    }
+
+    renderTable();
+  </script>
+</body>
+</html>
